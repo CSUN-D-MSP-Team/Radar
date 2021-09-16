@@ -19,7 +19,6 @@ from datetime import datetime, timedelta
 import datetime
 import time
 
-
 ################################################################################################
 #radar setting macros
 ################################################################################################
@@ -35,8 +34,6 @@ speed_limit = 'M>0'         #report values greater than 0
 speed_on = 'OS'
 speed_off =  'Os'
 
-
-
 #range reporting settings
 range_units = 'uM'          #reports range in units of meters
 range_limit = 'm>0'         #report range values greater than 0
@@ -49,8 +46,6 @@ baud_rate = 'I2'
 power_mode = "PA"           #normal operating mode
 invalid_type = 'BZ'         #reports invalid data as a "0"
 wait_between = 'WI'         #no wait between reports
-
-
 
 ################################################################################################
 #initialize serial coms
@@ -67,8 +62,6 @@ ser = serial.Serial(
 ser.flushInput()
 ser.flushOutput()
 
-
-
 ################################################################################################
 #function definitions
 ################################################################################################
@@ -80,14 +73,13 @@ def Filter ():
      Ops241_rx_bytes_length = len(Ops241_rx_bytes)
      if (rmd == 0) :
          units = " m/s"
-         tp = "Speed:"
-         
+         tp = "Speed:"   
      else :
          units = " m"
          tp = "Range:"
      if (Ops241_rx_bytes_length != 0) :
             Ops241_rx_str = str(Ops241_rx_bytes.decode("utf-8"))
-            result = re.sub("[^0-9 .]", "", Ops241_rx_str)
+            result = re.sub("[^0-9 . -]", "", Ops241_rx_str)
             print(tp)
             print(result + units + "\n")
      if (rmd != 0):
@@ -96,9 +88,6 @@ def Filter ():
                 #objects = ser.readline()
                 #print("\n" +  str(objects))
          print ("___________________________________")
-         
-
-
 
 # sendSerialCommand: function for sending commands to the OPS-241A module
 def send_serial_cmd(command) :
@@ -134,17 +123,14 @@ count = 1
 while 1:
         count += 1
         rmd = count % 2
-        #trigger alternation based on start bit
                       
         if rmd == 0:
+            send_serial_cmd(range_off)
             send_serial_cmd(run_speed)
             send_serial_cmd(speed_units)
-            send_serial_cmd(range_off)
-            #send_serial_cmd(speed_limit)
         else:
             send_serial_cmd(speed_off)
             send_serial_cmd(run_range)
             send_serial_cmd(range_units) 
-            #send_serial_cmd(range_limit)
         Filter()
         #print (send_serial_cmd(Ops241b_algo_call))      
