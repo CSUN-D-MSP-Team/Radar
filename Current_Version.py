@@ -138,8 +138,6 @@ from datetime import datetime, timedelta
 import time
 import re
 
-#send_serial_cmd(object_detection)
-
 send_serial_cmd(speed_limit)
 send_serial_cmd(range_limit)
 
@@ -148,17 +146,8 @@ send_serial_cmd(invalid_type)
 send_serial_cmd(wait_between)
 send_serial_cmd(sample_frequency)
 send_serial_cmd(baud_rate)
-
-#send_serial_cmd(speed_limit)
-
-#send_serial_cmd(magnitude_on)
-
 send_serial_cmd(speed_on1)
 send_serial_cmd(range_on1)
-
-#send_serial_cmd(speed_units)
-#send_serial_cmd(range_units)
-
 
 count = 1   
 while 1:
@@ -181,12 +170,7 @@ while 1:
             send_serial_cmd(range_units)
             send_serial_cmd(range_on)
             send_serial_cmd(range_on1)
-           # send_serial_cmd(range_units)
-            #send_serial_cmd(object_detection)
-            
             send_serial_cmd(range_limit)
-            
-            
-            
+                
         Filter()
-        #print (send_serial_cmd(Ops241b_algo_call))      
+              
