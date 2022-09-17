@@ -1,41 +1,23 @@
 # Author: Raf, Sako
 
 # Imports
-import os
-import sys
-from time import *
-from decimal import *
 import serial
 import re
-import colorsys
-import pdb
+import rospy
+from std_msgs.msg import Int32
+import radarCommands
 
-# Commands
+# Parameters
+# TODO: Integrate as ros params
 
-## Commands for initializing
-overflow_watchdog = 'OZ'
-power_mode = 'PA'
-invalid_type = 'BZ'
-wait_between = 'WI'
-sample frequency = 'S2'
-baud_rate = 'I2'
-
-## Commands for speed
-speed_on1 = 'O2'
-speed_units = 'uM'
-speed_limit = 'M>0'
-speed_off = 'Os'
-
-## Commands for range
-range_on1 = 'o2'
-range_units = 'uM' # = speed_units but ok
-range_limit = 'm>0'
-range_off = 'Od'
+baud = 115200
+port = '/dev/ttyACM0'
+freq = 10
 
 # Serial interface
 ser = serial.Serial (
-	port = '/dev/ttyACM0',
-	baudrate = 115200,
+	port = port,
+	baudrate = baud,
 	parity = serial.PARITY_NONE,
 	stopbits = serial.STOPBITS_ONE,
 	bytesize = serial.EIGHTBITS,
@@ -47,15 +29,50 @@ ser.flushOutput()
 
 def main ():
 	print("--OPS243 Radar--")
-	print("Initializing serial /dev/ttyACM0 @ 9600..")
+	print("Initializing serial: ", port, " @ ", baud)
+
+	readSpeed()
+	readRange()
+
+	# After verifying above works
 	
-	send
+	#speed = readSpeed()
+	#range = readRange()
+	
+	# After verifying above works
+	
+	# Add ros
+
+	#pubSpeed = rospy.Publisher('radarSpeed', Int32, queue_size = 10)
+	#pubRange = rospy.Publisher('radarRange', Int32, queue_size = 10)
+	#rospy.init_node('radar', anonymous = True)
+	#rate = rospy.Rate(freq)
+	#while not rospy.is_shutdown():
+		#currSpeed = readSpeed()
+		#currRange = readRange()
+		
+		#rospy.loginfo(currSpeed)
+		#pubSpeed.publish(currSpeed)
+		
+		#rospy.loginfo(currRange)
+		#pubRange.publish(currRange)	
+
+def readSer ():
+	radarRead = ser.readline()
+	radarReadStr = str(radarRead.decode("utf-8"))
+	if (len(radarRead) != 0):
+		result = re.sub("[^0-9 . - ]"," ", radarReadStr)
+	return result
 
 def readSpeed ():
 	send_serial_cmd(range_off)
 	send_serial_cmd(speed_on1)
 	send_serial_cmd(speed_units)
 	send_serial_cmd(speed_limit)
+	
+	result = readSer()
+	print("Speed", result)
+	#return result
 
 def readRange ():
 	send_serial_cmd(speed_off)
@@ -63,10 +80,9 @@ def readRange ():
 	send_serial_cmd(range_units)
 	send_serial_cmd(range_limit)
 	
-	radarRead = ser.readline()
-	if (len(radarRead) != 0):
-		
-
+	result = readSer()
+	print("Range", result)
+	#return result
 
 def send_serial_cmd (command):
 	data_for_send_str = command
