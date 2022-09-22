@@ -5,7 +5,6 @@ import serial
 import re
 import rospy
 from std_msgs.msg import Int32
-import radarCommands
 
 # Parameters
 # TODO: Integrate as ros params
@@ -27,62 +26,45 @@ ser = serial.Serial (
 ser.flushInput()
 ser.flushOutput()
 
+# Global variables
+oldRange = 0
+
 def main ():
 	print("--OPS243 Radar--")
 	print("Initializing serial: ", port, " @ ", baud)
 
-	readSpeed()
-	readRange()
+	while (1):
+		radarSpeed = readSpeed()
+		radarRange = readRange()
+		print("Speed:", radarSpeed, "\nRange:", radarRange)
 
-	# After verifying above works
-	
-	#speed = readSpeed()
-	#range = readRange()
-	
-	# After verifying above works
-	
-	# Add ros
-
-	#pubSpeed = rospy.Publisher('radarSpeed', Int32, queue_size = 10)
-	#pubRange = rospy.Publisher('radarRange', Int32, queue_size = 10)
-	#rospy.init_node('radar', anonymous = True)
-	#rate = rospy.Rate(freq)
-	#while not rospy.is_shutdown():
-		#currSpeed = readSpeed()
-		#currRange = readRange()
-		
-		#rospy.loginfo(currSpeed)
-		#pubSpeed.publish(currSpeed)
-		
-		#rospy.loginfo(currRange)
-		#pubRange.publish(currRange)	
+		# TODO: Add ROS publishers
 
 def readSer ():
 	radarRead = ser.readline()
 	radarReadStr = str(radarRead.decode("utf-8"))
-	if (len(radarRead) != 0):
-		result = re.sub("[^0-9 . - ]"," ", radarReadStr)
-	return result
+	return radarReadStr
 
 def readSpeed ():
-	send_serial_cmd(range_off)
-	send_serial_cmd(speed_on1)
-	send_serial_cmd(speed_units)
-	send_serial_cmd(speed_limit)
-	
+	global oldSpeed	
 	result = readSer()
-	print("Speed", result)
-	#return result
+	if (not(result.find('"mps"') == -1)):
+			result = re.sub("[^0-9 . - ]","", result)
+		return result
+	else:
+		# Speed data not returned so just return -1
+		return -1	
 
 def readRange ():
-	send_serial_cmd(speed_off)
-	send_serial_cmd(range_on1)
-	send_serial_cmd(range_units)
-	send_serial_cmd(range_limit)
-	
+	global oldRange
 	result = readSer()
-	print("Range", result)
-	#return result
+	if (not(result.find('"m"') == -1)):
+		result = re.sub("[^0-9 . - ]","", result)
+		oldRange = result
+		return result
+	else:
+		# Speed data was returned so just return old range value
+		return oldRange
 
 def send_serial_cmd (command):
 	data_for_send_str = command

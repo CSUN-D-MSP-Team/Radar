@@ -10,13 +10,13 @@ sample_frequency = 'S2'
 baud_rate = 'I2'
 
 ## Commands for speed
-speed_on1 = 'O2'
-speed_units = 'uM'
+speed_on1 = 'OS'
+speed_units = 'UM'
 speed_limit = 'M>0'
 speed_off = 'Os'
 
 ## Commands for range
-range_on1 = 'o2'
+range_on1 = 'OD'
 range_units = 'uM' # = speed_units but ok
 range_limit = 'm>0'
 range_off = 'Od'
