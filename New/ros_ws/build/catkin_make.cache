@@ -1,0 +1,2 @@
+ops243
+-DCATKIN_DEVEL_PREFIX=/home/talktosako/Documents/Radar/New/ros_ws/devel -DCMAKE_INSTALL_PREFIX=/home/talktosako/Documents/Radar/New/ros_ws/install -G Unix Makefiles

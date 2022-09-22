@@ -1,0 +1,8 @@
+prefix=/home/talktosako/Documents/Radar/New/ros_ws/devel
+
+Name: OPS243
+Description: Description of OPS243
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
